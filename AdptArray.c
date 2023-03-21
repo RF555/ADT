@@ -5,11 +5,11 @@
 
 
 struct AdptArray_ {
-    int size; // size of current array.
-    PElement *my_arr;
-    DEL_FUNC del_f;
-    COPY_FUNC copy_f;
-    PRINT_FUNC print_f;
+    int size; // Size of the array.
+    PElement *my_arr; // Pointer to the array.
+    DEL_FUNC del_f; // Delete function of the PElement.
+    COPY_FUNC copy_f; // Copy function of the PElement.
+    PRINT_FUNC print_f; // Print function of the PElement.
 };
 
 
@@ -19,7 +19,7 @@ struct AdptArray_ {
 
 // Initializes an empty PAdptArray.
 PAdptArray CreateAdptArray(COPY_FUNC copyFunc, DEL_FUNC delFunc, PRINT_FUNC printFunc) {
-    PAdptArray new_arr =(PAdptArray) malloc(sizeof(struct AdptArray_));
+    PAdptArray new_arr = (PAdptArray) malloc(sizeof(struct AdptArray_));
     if (new_arr == NULL) {
         printf("ERROR: Unable to allocate.");
         return NULL;
@@ -42,8 +42,10 @@ void DeleteAdptArray(PAdptArray arr) {
     }
     if (arr->my_arr != NULL) {
         for (int i = 0; i < arr->size; ++i) {
-            arr->del_f(arr->my_arr[i]);
+            if (arr->my_arr[i] != NULL) {
+                arr->del_f(arr->my_arr[i]);
 //            del_f(arr->my_arr[i]);
+            }
         }
     }
     // free the pointer my_arr
@@ -69,6 +71,7 @@ Result SetAdptArrayAt(PAdptArray arr, int index, PElement obj) {
         }
         arr->size = new_size;
     } else if (arr->my_arr[index] != NULL) {
+        // Free the existing object.
         arr->del_f(arr->my_arr[index]);
 //        del_f(arr->my_arr[index]);
     }
@@ -85,6 +88,7 @@ PElement GetAdptArrayAt(PAdptArray arr, int index) {
     if (index < 0 || index >= arr->size) {
         return NULL;
     } else if (arr->my_arr[index] != NULL) {
+        // Return a copy of the object.
         return arr->copy_f(arr->my_arr[index]);
     } else {
         return NULL;
